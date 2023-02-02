@@ -1,14 +1,12 @@
 import { Box, Button, TextField, Typography } from "@mui/material";
 import axios from "axios";
 import React, { useState } from "react";
-import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { authActions } from "../store";
 
-const Login = () => {
-  const dispatch = useDispatch();
-  const navigate = useNavigate();
+const Signup = () => {
+  const history = useNavigate();
   const [inputs, setInputs] = useState({
+    name: "",
     email: "",
     password: "",
   });
@@ -17,11 +15,13 @@ const Login = () => {
       ...prev,
       [e.target.name]: e.target.value,
     }));
+    console.log(e.target.name, "value", e.target.value);
   };
 
   const sendRequest = async () => {
     const res = await axios
-      .post("http://localhost:5000/api/login", {
+      .post("http://localhost:5000/api/signup", {
+        name: inputs.name,
         email: inputs.email,
         password: inputs.password,
       })
@@ -32,10 +32,7 @@ const Login = () => {
   };
   const handleSubmit = (e) => {
     e.preventDefault();
-    // send http request
-    sendRequest()
-      .then(() => dispatch(authActions.login()))
-      .then(() => navigate("/main"));
+    sendRequest().then(() => history("/login"));
   };
   return (
     <div>
@@ -49,8 +46,15 @@ const Login = () => {
           marginLeft="auto"
           marginRight="auto"
         >
-          <Typography variant="h2">Login</Typography>
-
+          <Typography variant="h2">Signup</Typography>
+          <TextField
+            name="name"
+            onChange={handleChange}
+            value={inputs.name}
+            variant="outlined"
+            placeholder="Name"
+            margin="normal"
+          />
           <TextField
             name="email"
             onChange={handleChange}
@@ -70,7 +74,7 @@ const Login = () => {
             margin="normal"
           />
           <Button variant="contained" type="submit">
-            Login
+            Signup
           </Button>
         </Box>
       </form>
@@ -78,4 +82,4 @@ const Login = () => {
   );
 };
 
-export default Login;
+export default Signup;
